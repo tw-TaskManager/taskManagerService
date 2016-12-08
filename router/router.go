@@ -8,41 +8,46 @@ import (
 	"TODO_Maker/model"
 	"log"
 	"fmt"
+	"database/sql"
 )
 
-func HandleRequest() {
+func HandleRequest(db *sql.DB) {
 	handler := mux.NewRouter()
-	handler.HandleFunc("/save", SaveTask).Methods("POST")
-	handler.HandleFunc("/getTask", GetTask).Methods("GET")
+	handler.HandleFunc("/save", SaveTask(db)).Methods("POST")
+	handler.HandleFunc("/tasks", GetAllTask(db)).Methods("GET")
 	handler.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 	http.Handle("/", handler)
 
 }
 
-func SaveTask(res http.ResponseWriter, req *http.Request) {
-	req.ParseForm();
-	task := strings.Join(req.Form["task"], "");
-	_, id := model.GenerateUUID();
-	fmt.Printf("%T",id)
-	task_to_db := model.Tasks{Id:id, Task:task}
-	_, err := database.SaveTask(&task_to_db)
-	if (err != nil) {
-		log.Fatal(err)
-		res.Write([]byte("got error.."))
+func SaveTask(db *sql.DB) http.HandlerFunc {
+	return func(res http.ResponseWriter, req *http.Request) {
+		req.ParseForm();
+		task := strings.Join(req.Form["task"], "");
+		task_to_db := model.Tasks{Task:task}
+		_, err := database.SaveTask(db, &task_to_db)
+		if (err != nil) {
+			log.Fatal(err.Error())
+			res.Write([]byte("got error.."))
+			return
+		}
+		res.Write([]byte("task has stored.."));
 	}
-	res.Write([]byte("task has stored.."));
+}
+func GetAllTask(db *sql.DB) http.HandlerFunc {
+	return func(res http.ResponseWriter, req *http.Request) {
+		data, err := database.GetTasks(db);
+		if (err != nil) {
+			log.Fatal(err)
+			res.Write([]byte("got error.."))
+		}
+		var tasks string;
+		for _, each := range data {
+			fmt.Println(each)
+			tasks += each.Task + "\n"
+		}
+		println(tasks)
+		res.Write([]byte(tasks));
+	}
 }
 
-func GetTask(res http.ResponseWriter, req *http.Request) {
-	data, err := database.GetTask();
-	if (err != nil) {
-		log.Fatal(err)
-		res.Write([]byte("got error.."))
-	}
-	var tasks string;
-
-	for _, each := range data {
-		tasks += each.Task + "\n"
-	}
-	res.Write([]byte(tasks));
-}
