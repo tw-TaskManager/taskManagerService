@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"toMaker/model"
+	"TODO_Maker/model"
 	_"github.com/lib/pq"
 	"log"
 )

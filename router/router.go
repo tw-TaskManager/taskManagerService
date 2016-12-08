@@ -4,15 +4,15 @@ import (
 	"github.com/gorilla/mux"
 	"strings"
 	"net/http"
-	"toMaker/database"
-	"toMaker/model"
+	"TODO_Maker/database"
+	"TODO_Maker/model"
 	"log"
 )
 
 func HandleRequest() {
 	handler := mux.NewRouter()
 	handler.HandleFunc("/save", SaveTask).Methods("POST")
-	handler.HandleFunc("/getData", GetTask).Methods("GET")
+	handler.HandleFunc("/getTask", GetTask).Methods("GET")
 	handler.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 	http.Handle("/", handler)
 
@@ -21,7 +21,7 @@ func HandleRequest() {
 func SaveTask(res http.ResponseWriter, req *http.Request) {
 	req.ParseForm();
 	task := strings.Join(req.Form["task"], "");
-	task_to_db := model.Tasks{Id:7, Task:task}
+	task_to_db := model.Tasks{Id:8, Task:task}
 	_, err := database.SaveTask(&task_to_db)
 	if (err != nil) {
 		log.Fatal(err)
