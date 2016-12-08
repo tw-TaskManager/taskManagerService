@@ -7,6 +7,7 @@ import (
 	"TODO_Maker/database"
 	"TODO_Maker/model"
 	"log"
+	"fmt"
 )
 
 func HandleRequest() {
@@ -21,7 +22,9 @@ func HandleRequest() {
 func SaveTask(res http.ResponseWriter, req *http.Request) {
 	req.ParseForm();
 	task := strings.Join(req.Form["task"], "");
-	task_to_db := model.Tasks{Id:8, Task:task}
+	_, id := model.GenerateUUID();
+	fmt.Printf("%T",id)
+	task_to_db := model.Tasks{Id:id, Task:task}
 	_, err := database.SaveTask(&task_to_db)
 	if (err != nil) {
 		log.Fatal(err)

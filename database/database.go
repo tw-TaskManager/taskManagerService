@@ -17,17 +17,17 @@ func GetDatabase() (*sql.DB, error) {
 	return db, err;
 }
 
-func SaveTask(tasks *model.Tasks) (int, error) {
+func SaveTask(tasks *model.Tasks) (string, error) {
 	db, err := GetDatabase();
 	defer db.Close();
 	if (err != nil) {
-		return 0, err;
+		return "", err;
 	}
-	var id int;
+	var id string;
 	queryErr := db.QueryRow("INSERT INTO Task_Manager (id,task) VALUES($1,$2) returning id;", tasks.Id, tasks.Task).Scan(&id);
 	if (queryErr != nil) {
 		log.Fatal(queryErr)
-		return 0, queryErr;
+		return "", queryErr;
 	}
 	return id, nil;
 }
@@ -44,7 +44,7 @@ func GetTask() ([]*model.Tasks, error) {
 	}
 	var tasks []*model.Tasks
 	for rows.Next() {
-		var id int
+		var id string
 		var task string
 		rows.Scan(&id, &task)
 		tasks = append(tasks, &model.Tasks{Id:id, Task:task})
