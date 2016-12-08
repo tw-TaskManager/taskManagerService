@@ -9,12 +9,12 @@ import (
 
 func main() {
 
-	db, err := database.CreateDataBase()
+	db, err := database.OreateDataBase()
 	if (err != nil) {
 		log.Fatal(err.Error())
 	}
-	router.HandleRequest(db);
+	db.Ping()
 	defer db.Close()
+	router.HandleRequest(db);
 	http.ListenAndServe(":3000", nil)
-
 }

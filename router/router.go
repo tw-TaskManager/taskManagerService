@@ -13,7 +13,7 @@ import (
 
 func HandleRequest(db *sql.DB) {
 	handler := mux.NewRouter()
-	handler.HandleFunc("/save", SaveTask(db)).Methods("POST")
+	handler.HandleFunc("/tasks", SaveTask(db)).Methods("POST")
 	handler.HandleFunc("/tasks", GetAllTask(db)).Methods("GET")
 	handler.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 	http.Handle("/", handler)
@@ -40,14 +40,15 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 		if (err != nil) {
 			log.Fatal(err)
 			res.Write([]byte("got error.."))
+			return
 		}
 		var tasks string;
 		for _, each := range data {
 			fmt.Println(each)
 			tasks += each.Task + "\n"
 		}
-		println(tasks)
 		res.Write([]byte(tasks));
 	}
 }
+
 

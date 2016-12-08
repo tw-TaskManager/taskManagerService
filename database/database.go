@@ -32,3 +32,6 @@ func GetTasks(db *sql.DB) ([]*model.Tasks, error) {
 	}
 	return tasks, nil
 }
+
+
+// DB Migration - goose - go library
