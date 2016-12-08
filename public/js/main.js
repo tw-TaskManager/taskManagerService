@@ -1,7 +1,6 @@
-//function save(){
-//    var toSave = $("#save>input").value
-//    $.post("/save",{data:toSave},function(){
-//
-//    })
-//}
-alert("Pop")
+function save(){
+    var toSave = $("#save input").val()
+    $.post("/save",{task:toSave},function(res,err){
+        alert(res);
+    })
+}

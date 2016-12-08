@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"toMaker/model"
 	_"github.com/lib/pq"
+	"log"
 )
 
 const (
@@ -16,36 +17,37 @@ func GetDatabase() (*sql.DB, error) {
 	return db, err;
 }
 
-func SaveContact(c *model.Contact) (int, error) {
+func SaveTask(tasks *model.Tasks) (int, error) {
 	db, err := GetDatabase();
 	defer db.Close();
 	if (err != nil) {
 		return 0, err;
 	}
 	var id int;
-	row := db.QueryRow("INSERT INTO CONTACT (id,name) VALUES($1,$2);", c.Id, c.Name).Scan(&id);
-	if (row != nil) {
-		return 0, err;
+	queryErr := db.QueryRow("INSERT INTO Task_Manager (id,task) VALUES($1,$2) returning id;", tasks.Id, tasks.Task).Scan(&id);
+	if (queryErr != nil) {
+		log.Fatal(queryErr)
+		return 0, queryErr;
 	}
 	return id, nil;
 }
 
-func GetName() ([]*model.Contact, error) {
+func GetTask() ([]*model.Tasks, error) {
 	db, err := GetDatabase();
 	defer db.Close();
 	if (err != nil) {
-		return [] *model.Contact{}, err
+		return [] *model.Tasks{}, err
 	}
-	rows, err := db.Query("SELECT * from contact")
+	rows, err := db.Query("SELECT * from Task_Manager")
 	if (err != nil) {
-		return [] *model.Contact{}, err;
+		return [] *model.Tasks{}, err;
 	}
-	var contacts []*model.Contact
+	var tasks []*model.Tasks
 	for rows.Next() {
 		var id int
-		var name string
-		rows.Scan(&id, &name)
-		contacts = append(contacts, &model.Contact{Id:id, Name:name})
+		var task string
+		rows.Scan(&id, &task)
+		tasks = append(tasks, &model.Tasks{Id:id, Task:task})
 	}
-	return contacts, nil
+	return tasks, nil
 }

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"toMaker/abc.TODOMaker.com/router"
 
 	"net/http"
+	"toMaker/router"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 package model
 
-type Contact struct{
+type Tasks struct{
 	Id int
-	Name string
+	Task string
 }
