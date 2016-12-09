@@ -4,8 +4,8 @@ import (
 	"github.com/gorilla/mux"
 	"strings"
 	"net/http"
-	"TODO_Maker/database"
-	"TODO_Maker/model"
+	"task_manager/database"
+	"task_manager/model"
 	"log"
 	"fmt"
 	"database/sql"
@@ -50,5 +50,4 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 		res.Write([]byte(tasks));
 	}
 }
-
 

@@ -2,14 +2,14 @@ package main
 
 import (
 	"net/http"
-	"TODO_Maker/router"
-	"TODO_Maker/database"
+	"task_manager/router"
+	"task_manager/database"
 	"log"
 )
 
 func main() {
 
-	db, err := database.OreateDataBase()
+	db, err := database.OpenDatabase()
 	if (err != nil) {
 		log.Fatal(err.Error())
 	}
