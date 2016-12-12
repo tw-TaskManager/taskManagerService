@@ -1,5 +1,5 @@
 package model
 
-type Tasks struct {
+type Task struct {
 	Task string
 }

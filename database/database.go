@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func SaveTask(db *sql.DB, tasks *model.Tasks) (int, error) {
+func SaveTask(db *sql.DB, tasks *model.Task) (int, error) {
 	var id int;
 	queryErr := db.QueryRow("INSERT INTO Task_Manager (task) VALUES($1) returning id;", tasks.Task).Scan(&id);
 	if (queryErr != nil) {
@@ -17,18 +17,18 @@ func SaveTask(db *sql.DB, tasks *model.Tasks) (int, error) {
 	return id, nil;
 }
 
-func GetTasks(db *sql.DB) ([]*model.Tasks, error) {
+func GetTasks(db *sql.DB) ([]*model.Task, error) {
 	rows, err := db.Query("SELECT id,task from Task_Manager")
 	if (err != nil) {
 		log.Fatal(err.Error())
-		return [] *model.Tasks{}, err;
+		return [] *model.Task{}, err;
 	}
-	var tasks []*model.Tasks
+	var tasks []*model.Task
 	for rows.Next() {
 		var task string
 		var id int
 		rows.Scan(&id, &task)
-		tasks = append(tasks, &model.Tasks{Task:task})
+		tasks = append(tasks, &model.Task{Task:task})
 	}
 	return tasks, nil
 }
