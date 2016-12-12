@@ -24,7 +24,7 @@ func SaveTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		req.ParseForm();
 		task := strings.Join(req.Form["task"], "");
-		task_to_db := model.Tasks{Task:task}
+		task_to_db := model.Task{Task:task}
 		err := database.SaveTask(db, &task_to_db)
 		if (err != nil) {
 			log.Fatal(err.Error())
@@ -50,4 +50,3 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 		res.Write([]byte(tasks));
 	}
 }
-

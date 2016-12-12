@@ -6,7 +6,7 @@ import (
 	_"github.com/lib/pq"
 )
 
-func SaveTask(db *sql.DB, tasks *model.Tasks) (error) {
+func SaveTask(db *sql.DB, tasks *model.Task) (error) {
 	_, queryErr := db.Exec("INSERT INTO Task_Manager (task) VALUES($1)", tasks.Task)
 	if (queryErr != nil) {
 		return queryErr;
@@ -14,17 +14,17 @@ func SaveTask(db *sql.DB, tasks *model.Tasks) (error) {
 	return nil;
 }
 
-func GetTasks(db *sql.DB) ([]*model.Tasks, error) {
+func GetTasks(db *sql.DB) ([]*model.Task, error) {
 	rows, err := db.Query("SELECT id,task from Task_Manager")
 	if (err != nil) {
-		return [] *model.Tasks{}, err;
+		return [] *model.Task{}, err;
 	}
-	var tasks []*model.Tasks
+	var tasks []*model.Task
 	for rows.Next() {
 		var task string
 		var id int
 		rows.Scan(&id, &task)
-		tasks = append(tasks, &model.Tasks{Task:task})
+		tasks = append(tasks, &model.Task{Task:task})
 	}
 	return tasks, nil
 }
