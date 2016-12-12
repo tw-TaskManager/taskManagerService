@@ -4,23 +4,19 @@ import (
 	"database/sql"
 	"task_manager/model"
 	_"github.com/lib/pq"
-	"log"
 )
 
-func SaveTask(db *sql.DB, tasks *model.Tasks) (int, error) {
-	var id int;
-	queryErr := db.QueryRow("INSERT INTO Task_Manager (task) VALUES($1) returning id;", tasks.Task).Scan(&id);
+func SaveTask(db *sql.DB, tasks *model.Tasks) (error) {
+	_, queryErr := db.Exec("INSERT INTO Task_Manager (task) VALUES($1)", tasks.Task)
 	if (queryErr != nil) {
-		log.Fatal(queryErr)
-		return 0, queryErr;
+		return queryErr;
 	}
-	return id, nil;
+	return nil;
 }
 
 func GetTasks(db *sql.DB) ([]*model.Tasks, error) {
 	rows, err := db.Query("SELECT id,task from Task_Manager")
 	if (err != nil) {
-		log.Fatal(err.Error())
 		return [] *model.Tasks{}, err;
 	}
 	var tasks []*model.Tasks

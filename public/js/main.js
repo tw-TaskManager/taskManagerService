@@ -1,7 +1,8 @@
 function save(){
     var toSave = $("#save input").val()
+    $('#tasks').append(toSave+"<br>");
     $.post("/tasks",{task:toSave},function(res,err){
-        $('#tasks').append(toSave);
+
     })
 }
 
