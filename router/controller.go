@@ -14,5 +14,4 @@ func HandleRequest(db *sql.DB) {
 	handler.HandleFunc("/tasks", taskHandler.GetAllTask(db)).Methods("GET")
 	handler.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 	http.Handle("/", handler)
-
 }
