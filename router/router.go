@@ -45,7 +45,7 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 		var tasks string;
 		for _, each := range data {
 			fmt.Println(each)
-			tasks += each.Task + "\n"
+			tasks += each.Task + "<br/>"
 		}
 		res.Write([]byte(tasks));
 	}
