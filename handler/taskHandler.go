@@ -27,7 +27,7 @@ func SaveTask(db *sql.DB) http.HandlerFunc {
 		taskToDb := model.Task{}
 		taskToDb.Task = *data.Task
 
-		if database.SaveTask(db, &taskToDb) {
+		if err = database.SaveTask(db, &taskToDb); err != nil {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
@@ -39,7 +39,6 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		data, err := database.GetTasks(db);
 		if (err != nil) {
-			log.Fatal(err)
 			res.Write([]byte("got error.."))
 			return
 		}

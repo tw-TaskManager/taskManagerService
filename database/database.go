@@ -17,7 +17,7 @@ func SaveTask(db *sql.DB, tasks *model.Task) (error) {
 func GetTasks(db *sql.DB) ([]*model.Task, error) {
 	rows, err := db.Query("SELECT id,task from Task_Manager")
 	if (err != nil) {
-		return [] *model.Task{}, err;
+		return nil, err;
 	}
 	var tasks []*model.Task
 	for rows.Next() {
