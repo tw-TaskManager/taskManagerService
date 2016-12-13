@@ -4,19 +4,30 @@ import (
 	"taskManagerService/database"
 	"log"
 	"database/sql"
-	"taskManagerService/model"
 	"net/http"
-	"fmt"
-	"strings"
+	"github.com/golang/protobuf/proto"
+	"io/ioutil"
+	"taskManagerClient/contract"
+	"taskManagerService/model"
 )
 
 func SaveTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		req.ParseForm();
-		task := strings.Join(req.Form["task"], "");
-		task_to_db := model.Task{Task:task}
-		err := database.SaveTask(db, &task_to_db)
+		requestData, err := ioutil.ReadAll(req.Body)
 		if (err != nil) {
+			log.Fatalf("got error while reading req %s", req.URL)
+			return
+		}
+		data := &contract.Task{}
+
+		if err = proto.Unmarshal(requestData, data); err != nil {
+			log.Fatalln("got error while unmarsling")
+		}
+		taskToDb := model.Task{}
+		taskToDb.Task = *data.Task
+
+		if database.SaveTask(db, &taskToDb) {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
@@ -34,7 +45,6 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 		}
 		var tasks string;
 		for _, each := range data {
-			fmt.Println(each)
 			tasks += each.Task + "<br/>"
 		}
 		res.Write([]byte(tasks));
