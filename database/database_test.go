@@ -3,7 +3,7 @@ package database
 import (
 	"testing"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"task_manager/model"
+	"taskManagerService/model"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 )

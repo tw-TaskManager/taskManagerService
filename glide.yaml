@@ -1,0 +1,9 @@
+package: taskManagerService
+import:
+- package: github.com/gorilla/mux
+- package: github.com/lib/pq
+- package: github.com/pressly/goose
+- package: gopkg.in/DATA-DOG/go-sqlmock.v1
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert

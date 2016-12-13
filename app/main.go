@@ -2,8 +2,8 @@ package main
 
 import (
 	"net/http"
-	"task_manager/router"
-	"task_manager/database"
+	"taskManagerService/router"
+	"taskManagerService/database"
 	"log"
 )
 

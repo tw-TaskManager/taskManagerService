@@ -3,7 +3,7 @@ package router
 import (
 	"database/sql"
 	"github.com/gorilla/mux"
-	taskHandler "task_manager/handler"
+	taskHandler "taskManagerService/handler"
 	"net/http"
 )
 

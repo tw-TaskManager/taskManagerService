@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"task_manager/model"
+	"taskManagerService/model"
 	_"github.com/lib/pq"
 )
 

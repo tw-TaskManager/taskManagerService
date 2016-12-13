@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"task_manager/database"
+	"taskManagerService/database"
 	"log"
 	"database/sql"
-	"task_manager/model"
+	"taskManagerService/model"
 	"net/http"
 	"fmt"
 	"strings"
