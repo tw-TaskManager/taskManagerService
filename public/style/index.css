@@ -1,6 +1,7 @@
 .sticky {
     margin: 20px;
     font-size: x-large;
+    resize: none;
 }
 
 #add:before {

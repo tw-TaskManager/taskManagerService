@@ -1,10 +1,6 @@
-function save() {
-  var toSave = $('#save input').val();
-  if (toSave != '') {
-    $.post('/tasks', {task: toSave}, function (res, err) {
-      $('#tasks').append(toSave + '<br>');
-    })
-  }
+function save(content) {
+  $.post('/tasks', {task: content}, function (res, err) {
+  })
 }
 
 function textAreaContaining(content, id) {
@@ -28,14 +24,8 @@ function createStickies(contentList, id) {
 
 function allTask() {
   $.get('/tasks', function (res, err) {
-    res = [
-      'some',
-      'thing',
-      'foo',
-      'bar',
-      'hello',
-      'world'
-    ];
+    res = res.split('<br/>');
+    res.length -= 1;
     createStickies(res);
   })
 }
@@ -67,8 +57,8 @@ function saveSticky() {
   var newSticky = $('.new').first();
   var content = newSticky.val();
   createStickies([content], newSticky.id);
+  save(content);
   reset();
-
 }
 
 window.load = allTask();
