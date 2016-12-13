@@ -3,22 +3,33 @@ function save(content) {
   })
 }
 
-function textAreaContaining(content, id) {
+function textArea(content, id) {
   var node = document.createElement('textarea');
-  node.classList.add('sticky');
   node.id = id;
+  node.classList.add('sticky');
   node.style.width = '500px';
   node.style.height = '200px';
   var textNode = document.createTextNode(content);
-
   node.appendChild(textNode);
+
   return node;
 }
+
+//
+// function createRemoveButton(id) {
+//   var deleteButton = document.createElement('button');
+//   deleteButton.id = id;
+//   deleteButton.classList.add('deleteSticky');
+//   return deleteButton;
+// }
 
 function createStickies(contentList, id) {
   var stickyContainer = $('#stickies')[0];
   contentList.forEach(function (content, index = id || index) {
-    stickyContainer.prepend(textAreaContaining(content, index));
+    var div = document.createElement('div');
+    div.classList.add('stickyContainer');
+    stickyContainer.prepend(div.appendChild(textArea(content, index)));
+
   });
 }
 
@@ -35,13 +46,16 @@ function addSticky() {
   var newBlock = $('#new');
   var listOfStickies = $('.sticky');
   var id = listOfStickies.length != 0 ? Number(listOfStickies.first()[0].id) + 1 : 1;
-  var node = textAreaContaining('', id);
-  node.classList.add('new');
+  var node = textArea('', id);
+  var div = document.createElement('div');
+  div.classList.add('new');
 
   node.style.width = '1600px';
   node.style.height = '500px';
 
-  newBlock.append(node);
+  div.appendChild(node);
+
+  newBlock.append(div);
   $('#save').show();
 }
 
@@ -54,7 +68,7 @@ function reset() {
 }
 
 function saveSticky() {
-  var newSticky = $('.new').first();
+  var newSticky = $('.new').children();
   var content = newSticky.val();
   createStickies([content], newSticky.id);
   save(content);
