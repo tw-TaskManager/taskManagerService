@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"taskManagerClient/contract"
 	"taskManagerService/model"
+	_"encoding/json"
 )
 
 func SaveTask(db *sql.DB) http.HandlerFunc {
@@ -33,19 +34,23 @@ func SaveTask(db *sql.DB) http.HandlerFunc {
 			return
 		}
 		res.Write([]byte("task has stored.."));
+		return
 	}
 }
 func GetAllTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
+		responseContract := contract.Response{}
 		data, err := database.GetTasks(db);
+		responseContract.Response = []byte(data)
 		if (err != nil) {
 			res.Write([]byte("got error."))
 			return
 		}
-		var tasks string;
-		for _, each := range data {
-			tasks += each.Task + "<br/>"
+		dataToSend, err := proto.Marshal(&responseContract)
+		if (err != nil) {
+			res.Write([]byte("got error."))
+			return
 		}
-		res.Write([]byte(tasks));
+		res.Write(dataToSend)
 	}
 }
