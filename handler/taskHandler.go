@@ -39,7 +39,7 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		data, err := database.GetTasks(db);
 		if (err != nil) {
-			res.Write([]byte("got error.."))
+			res.Write([]byte("got error."))
 			return
 		}
 		var tasks string;

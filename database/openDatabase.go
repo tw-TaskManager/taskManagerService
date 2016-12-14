@@ -9,5 +9,6 @@ const (
 
 func OpenDatabase() (*sql.DB, error) {
 	db, err := sql.Open(DB_DRIVER, DB_CONNECTION)
+	db.Ping()
 	return db, err;
 }

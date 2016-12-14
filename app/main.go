@@ -13,7 +13,6 @@ func main() {
 	if (err != nil) {
 		log.Fatal(err.Error())
 	}
-	db.Ping()
 	defer db.Close()
 	router.HandleRequest(db);
 	http.ListenAndServe(":3000", nil)

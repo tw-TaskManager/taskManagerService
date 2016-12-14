@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"net/http"
 	"fmt"
+	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 )
 
 func TestGetAllTask(t *testing.T) {
@@ -21,7 +23,10 @@ func TestGetAllTask(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/tasks", nil)
 	rr := httptest.NewRecorder()
 	getHandler.ServeHTTP(rr, req)
-	fmt.Println(rr.Code)
+	res, _ := ioutil.ReadAll(rr.Body)
+
+	assert.Equal(t, res, []byte("got error."))
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expections: %s", err)
 	}
