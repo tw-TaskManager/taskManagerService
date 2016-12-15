@@ -38,6 +38,38 @@ func TestSaveTasksReturnError(t *testing.T) {
 	}
 }
 
+func TestDeleteTaskForSuccessConnection(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close();
+	taskId := model.Task{Task:"this is task", Id:2}
+	mock.ExpectExec("DELETE FROM Task_Manager").WithArgs(taskId.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+	if err := DeleteTask(db, &taskId); err != nil {
+		t.Errorf("error was not expected while updating stats: %s", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expections: %s", err)
+	}
+}
+
+func TestUpdateTaskForSuccessConnection(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close();
+	tasks := model.Task{Task:"this is task", Id:2}
+	mock.ExpectExec("UPDATE Task_Manager SET").WithArgs(tasks.Task, tasks.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+	if err := UpdateTask(db, &tasks); err != nil {
+		t.Errorf("error was not expected while updating stats: %s", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expections: %s", err)
+	}
+}
+
 func TestGetTasks(t *testing.T) {
 	db, mock, err := sqlmock.New();
 
@@ -49,8 +81,10 @@ func TestGetTasks(t *testing.T) {
 		AddRow(1, "one").
 		AddRow(2, "two")
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	rs, _ := GetTasks(db);
-	assert.Equal(t, len(rs), 2)
+	GetTasks(db);
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expections: %s", err)
+	}
 
 }
 

@@ -9,8 +9,9 @@ import (
 
 func HandleRequest(db *sql.DB) {
 	handler := mux.NewRouter()
-
-	handler.HandleFunc("/tasks", taskHandler.SaveTask(db)).Methods("POST")
+	handler.HandleFunc("/tasks/save", taskHandler.SaveTask(db)).Methods("POST")
+	handler.HandleFunc("/tasks/delete", taskHandler.DeleteTask(db)).Methods("POST")
+	handler.HandleFunc("/tasks/update", taskHandler.UpdateTask(db)).Methods("POST")
 	handler.HandleFunc("/tasks", taskHandler.GetAllTask(db)).Methods("GET")
 	handler.PathPrefix("/").Handler(http.FileServer(http.Dir("./public")))
 	http.Handle("/", handler)

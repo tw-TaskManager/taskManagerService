@@ -24,13 +24,29 @@ func GetTasks(db *sql.DB) ([]byte, error) {
 	listOfTasks := []*model.Task{}
 	for rows.Next() {
 		var task string
-		var id int
+		var id int32
 		rows.Scan(&id, &task)
 		tasks := model.Task{task, id}
 		listOfTasks = append(listOfTasks, &tasks)
 	}
 	data, err := json.Marshal(listOfTasks)
 	return data, nil
+}
+
+func DeleteTask(db *sql.DB, task *model.Task) (error) {
+	_, queryErr := db.Exec("DELETE FROM Task_Manager WHERE id=$1", task.Id);
+	if (queryErr != nil) {
+		return queryErr;
+	}
+	return nil;
+}
+
+func UpdateTask(db *sql.DB, task *model.Task) (error) {
+	_, queryErr := db.Exec("UPDATE Task_Manager SET task=$1 where id=$2;", task.Task, task.Id);
+	if (queryErr != nil) {
+		return queryErr;
+	}
+	return nil;
 }
 
 
