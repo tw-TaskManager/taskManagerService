@@ -7,12 +7,20 @@ import (
 	"encoding/json"
 )
 
-func SaveTask(db *sql.DB, tasks *model.Task) (error) {
-	_, queryErr := db.Exec("INSERT INTO Task_Manager (task) VALUES($1)", tasks.Task)
+func SaveTask(db *sql.DB, tasks *model.Task) (int32, error) {
+	result, queryErr := db.Query("INSERT INTO Task_Manager (task) VALUES($1) RETURNING id;", tasks.Task)
+
 	if (queryErr != nil) {
-		return queryErr;
+		return 0, queryErr;
 	}
-	return nil;
+	ids := make([]int32, 0, 0)
+	for result.Next() {
+		var id int32;
+		result.Scan(&id)
+		ids = append(ids, id)
+	}
+	currentId := ids[len(ids) - 1]
+	return currentId, nil;
 }
 
 func GetTasks(db *sql.DB) ([]byte, error) {

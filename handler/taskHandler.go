@@ -10,6 +10,7 @@ import (
 	"taskManagerClient/contract"
 	"taskManagerService/model"
 	_"encoding/json"
+	"strconv"
 )
 
 func SaveTask(db *sql.DB) http.HandlerFunc {
@@ -28,13 +29,24 @@ func SaveTask(db *sql.DB) http.HandlerFunc {
 		taskToDb := model.Task{}
 		taskToDb.Task = *data.Task
 
-		if err = database.SaveTask(db, &taskToDb); err != nil {
+		taskId, err := database.SaveTask(db, &taskToDb);
+		if ( err != nil) {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
 		}
-		res.Write([]byte("task has stored.."));
+		dataToSend := &contract.Response{}
+		byteOfId := []byte(strconv.Itoa(int(taskId)))
+		dataToSend.Response = byteOfId
+		response, err := proto.Marshal(dataToSend)
+		if ( err != nil) {
+			log.Fatal(err.Error())
+			res.Write([]byte("got error.."))
+			return
+		}
+		res.Write(response);
 		return
+
 	}
 }
 
@@ -73,14 +85,15 @@ func UpdateTask(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		taskId := &contract.Task{}
+		task := &contract.Task{}
 
-		if err = proto.Unmarshal(requestedData, taskId); err != nil {
+		if err = proto.Unmarshal(requestedData, task); err != nil {
 			log.Fatalln("got error while unmarsling")
 		}
-		idContract := model.Task{}
-		idContract.Id = *taskId.Id;
-		if err = database.UpdateTask(db, &idContract); err != nil {
+		contract := model.Task{}
+		contract.Task = *task.Task
+		contract.Id = *task.Id;
+		if err = database.UpdateTask(db, &contract); err != nil {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return

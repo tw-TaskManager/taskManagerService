@@ -16,7 +16,7 @@ func TestSaveTasksForSuccessConnection(t *testing.T) {
 	defer db.Close();
 	task := model.Task{Task:"this is task"}
 	mock.ExpectExec("INSERT INTO Task_Manager").WithArgs(task.Task).WillReturnResult(sqlmock.NewResult(1, 2)) //assert
-	if err := SaveTask(db, &task); err != nil {
+	if _, err := SaveTask(db, &task); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
@@ -32,7 +32,7 @@ func TestSaveTasksReturnError(t *testing.T) {
 	db.Close();
 	task := model.Task{Task:"this is task"}
 	mock.ExpectExec("INSERT INTO Task_Manager").WithArgs(task.Task).WillReturnError(fmt.Errorf("database is closed")) //assert
-	err = SaveTask(db, &task);
+	_,err = SaveTask(db, &task);
 	if err == nil {
 		t.Errorf("was expecting an error, but there was none")
 	}
