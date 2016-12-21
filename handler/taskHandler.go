@@ -11,11 +11,13 @@ import (
 	"taskManagerService/model"
 	_"encoding/json"
 	"strconv"
+	"strings"
 )
 
 func SaveTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		req.ParseForm();
+		userId := strings.Split(req.RequestURI, "/")[3]
 		requestData, err := ioutil.ReadAll(req.Body)
 		if (err != nil) {
 			log.Fatalf("got error while reading req %s", req.URL)
@@ -29,7 +31,7 @@ func SaveTask(db *sql.DB) http.HandlerFunc {
 		taskToDb := model.Task{}
 		taskToDb.Task = *data.Task
 
-		taskId, err := database.SaveTask(db, &taskToDb);
+		taskId, err := database.SaveTask(db, &taskToDb, userId);
 		if ( err != nil) {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
@@ -53,6 +55,7 @@ func SaveTask(db *sql.DB) http.HandlerFunc {
 func DeleteTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		req.ParseForm();
+		userId := strings.Split(req.RequestURI, "/")[3]
 		requestedData, err := ioutil.ReadAll(req.Body);
 		if (err != nil) {
 			log.Fatalf("got error while reading req %s", req.URL)
@@ -66,7 +69,7 @@ func DeleteTask(db *sql.DB) http.HandlerFunc {
 		}
 		idContract := model.Task{}
 		idContract.Id = *taskId.Id;
-		if err = database.DeleteTask(db, &idContract); err != nil {
+		if err = database.DeleteTask(db, &idContract, userId); err != nil {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
@@ -79,6 +82,7 @@ func DeleteTask(db *sql.DB) http.HandlerFunc {
 func UpdateTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		req.ParseForm();
+		userId := strings.Split(req.RequestURI, "/")[3]
 		requestedData, err := ioutil.ReadAll(req.Body);
 		if (err != nil) {
 			log.Fatalf("got error while reading req %s", req.URL)
@@ -93,7 +97,7 @@ func UpdateTask(db *sql.DB) http.HandlerFunc {
 		contract := model.Task{}
 		contract.Task = *task.Task
 		contract.Id = *task.Id;
-		if err = database.UpdateTask(db, &contract); err != nil {
+		if err = database.UpdateTask(db, &contract, userId); err != nil {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
@@ -105,8 +109,9 @@ func UpdateTask(db *sql.DB) http.HandlerFunc {
 
 func GetAllTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
+		userId := strings.Split(req.RequestURI, "/")[2]
 		responseContract := contract.Response{}
-		data, err := database.GetTasks(db);
+		data, err := database.GetTasks(db, userId);
 		responseContract.Response = []byte(data)
 		if (err != nil) {
 			res.Write([]byte("got error."))

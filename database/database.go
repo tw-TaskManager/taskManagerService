@@ -7,9 +7,8 @@ import (
 	"encoding/json"
 )
 
-func SaveTask(db *sql.DB, tasks *model.Task) (int32, error) {
-	result, queryErr := db.Query("INSERT INTO Task_Manager (task) VALUES($1) RETURNING id;", tasks.Task)
-
+func SaveTask(db *sql.DB, tasks *model.Task, userId string) (int32, error) {
+	result, queryErr := db.Query(`INSERT INTO task_manager (task,"userId") VALUES($1,$2) RETURNING id;`, tasks.Task, userId)
 	if (queryErr != nil) {
 		return 0, queryErr;
 	}
@@ -23,8 +22,8 @@ func SaveTask(db *sql.DB, tasks *model.Task) (int32, error) {
 	return currentId, nil;
 }
 
-func GetTasks(db *sql.DB) ([]byte, error) {
-	rows, err := db.Query("SELECT id,task from Task_Manager")
+func GetTasks(db *sql.DB, userId string) ([]byte, error) {
+	rows, err := db.Query(`SELECT id,task from task_manager where "userId"=$1`, userId)
 	if (err != nil) {
 		return nil, err;
 	}
@@ -41,16 +40,16 @@ func GetTasks(db *sql.DB) ([]byte, error) {
 	return data, nil
 }
 
-func DeleteTask(db *sql.DB, task *model.Task) (error) {
-	_, queryErr := db.Exec("DELETE FROM Task_Manager WHERE id=$1", task.Id);
+func DeleteTask(db *sql.DB, task *model.Task, userId string) (error) {
+	_, queryErr := db.Exec(`DELETE FROM Task_Manager WHERE id=$1 and "userId"=$2`, task.Id, userId);
 	if (queryErr != nil) {
 		return queryErr;
 	}
 	return nil;
 }
 
-func UpdateTask(db *sql.DB, task *model.Task) (error) {
-	_, queryErr := db.Exec("UPDATE Task_Manager SET task=$1 where id=$2;", task.Task, task.Id);
+func UpdateTask(db *sql.DB, task *model.Task, userId string) (error) {
+	_, queryErr := db.Exec(`UPDATE task_manager SET task=$1 where id=$2 and "userId"=$3;`, task.Task, task.Id, userId);
 	if (queryErr != nil) {
 		return queryErr;
 	}
