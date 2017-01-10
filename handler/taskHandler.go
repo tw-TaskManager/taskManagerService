@@ -69,7 +69,7 @@ func DeleteTask(db *sql.DB) http.HandlerFunc {
 		}
 		idContract := model.Task{}
 		idContract.Id = *taskId.Id;
-		if err = database.DeleteTask(db, &idContract, userId); err != nil {
+		if err = database.DeleteTaskOfGivenId(db, &idContract, userId); err != nil {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
@@ -97,7 +97,7 @@ func UpdateTask(db *sql.DB) http.HandlerFunc {
 		contract := model.Task{}
 		contract.Task = *task.Task
 		contract.Id = *task.Id;
-		if err = database.UpdateTask(db, &contract, userId); err != nil {
+		if err = database.UpdateTaskOfGivenId(db, &contract, userId); err != nil {
 			log.Fatal(err.Error())
 			res.Write([]byte("got error.."))
 			return
@@ -111,8 +111,8 @@ func GetAllTask(db *sql.DB) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		userId := strings.Split(req.RequestURI, "/")[2]
 		responseContract := contract.Response{}
-		data, err := database.GetTasks(db, userId);
-		responseContract.Response = []byte(data)
+		taskList, err := database.GetTasks(db, userId);
+		responseContract.Response = []byte(taskList)
 		if (err != nil) {
 			res.Write([]byte("got error."))
 			return

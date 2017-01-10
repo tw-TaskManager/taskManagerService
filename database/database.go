@@ -4,12 +4,20 @@ import (
 	"database/sql"
 	"taskManagerService/model"
 	_"github.com/lib/pq"
-	"encoding/json"
+	"fmt"
+)
+
+const (
+	InsertTaskOfGivenId = `INSERT INTO task_manager (task,userId) VALUES($1,$2) RETURNING id;`
+	UpdateTaskOfGivenId = `UPDATE task_manager SET task=$1 where id=$2 and userId=$3;`
+	DeleteTaskOfGivenId = `DELETE FROM task_manager WHERE id=$1 and userId=$2`
+	SelectTaskOfGivenId = `SELECT id,task from task_manager where userId=$1`
 )
 
 func SaveTask(db *sql.DB, tasks *model.Task, userId string) (int32, error) {
-	result, queryErr := db.Query(`INSERT INTO task_manager (task,"userId") VALUES($1,$2) RETURNING id;`, tasks.Task, userId)
+	result, queryErr := db.Query(InsertTaskOfGivenId, tasks.Task, userId)
 	if (queryErr != nil) {
+		fmt.Println("----------------")
 		return 0, queryErr;
 	}
 	ids := make([]int32, 0, 0)
@@ -22,8 +30,8 @@ func SaveTask(db *sql.DB, tasks *model.Task, userId string) (int32, error) {
 	return currentId, nil;
 }
 
-func GetTasks(db *sql.DB, userId string) ([]byte, error) {
-	rows, err := db.Query(`SELECT id,task from task_manager where "userId"=$1`, userId)
+func GetTasks(db *sql.DB, userId string) ([]*model.Task, error) {
+	rows, err := db.Query(SelectTaskOfGivenId, userId)
 	if (err != nil) {
 		return nil, err;
 	}
@@ -36,12 +44,11 @@ func GetTasks(db *sql.DB, userId string) ([]byte, error) {
 		tasks := model.Task{task, id}
 		listOfTasks = append(listOfTasks, &tasks)
 	}
-	data, err := json.Marshal(listOfTasks)
-	return data, nil
+	return listOfTasks, nil
 }
 
 func DeleteTask(db *sql.DB, task *model.Task, userId string) (error) {
-	_, queryErr := db.Exec(`DELETE FROM Task_Manager WHERE id=$1 and "userId"=$2`, task.Id, userId);
+	_, queryErr := db.Exec(DeleteTaskOfGivenId, task.Id, userId);
 	if (queryErr != nil) {
 		return queryErr;
 	}
@@ -49,7 +56,7 @@ func DeleteTask(db *sql.DB, task *model.Task, userId string) (error) {
 }
 
 func UpdateTask(db *sql.DB, task *model.Task, userId string) (error) {
-	_, queryErr := db.Exec(`UPDATE task_manager SET task=$1 where id=$2 and "userId"=$3;`, task.Task, task.Id, userId);
+	_, queryErr := db.Exec(UpdateTaskOfGivenId, task.Task, task.Id, userId);
 	if (queryErr != nil) {
 		return queryErr;
 	}
